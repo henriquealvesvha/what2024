@@ -215,7 +215,7 @@ const TagModal = ({ open, onClose, tagId, reload, kanban }) => {
 									disabled={isSubmitting}
 									variant="outlined"
 								>
-									{i18n.t("tagModal.buttons.cancel")}
+									{i18n.t("Cancelar")}
 								</Button>
 								<Button
 									type="submit"
@@ -225,8 +225,8 @@ const TagModal = ({ open, onClose, tagId, reload, kanban }) => {
 									className={classes.btnWrapper}
 								>
 									{tagId
-										? `${i18n.t("tagModal.buttons.okEdit")}`
-										: `${i18n.t("tagModal.buttons.okAdd")}`}
+										? `${i18n.t("Editar")}`
+										: `${i18n.t("Adicionar")}`}
 									{isSubmitting && (
 										<CircularProgress
 											size={24}
