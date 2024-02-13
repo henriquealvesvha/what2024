@@ -910,6 +910,7 @@ const messages = {
           greeting: "Mensagem de saudação",
           actions: "Ações",
           orderQueue: "Ordenação da fila (bot)",
+          queues.table.ID: "ID DA FILA"
         },
         buttons: {
           add: "Adicionar fila",
