@@ -98,7 +98,7 @@ const ToDoList = () => {
       <div className={classes.inputContainer}>
         <TextField
           className={classes.input}
-          label={i18n.t("Nova Tarefa")}
+          label={i18n.t("todo.newtask")}
           value={task}
           onChange={handleTaskChange}
           variant="outlined"

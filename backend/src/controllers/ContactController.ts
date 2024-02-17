@@ -7,6 +7,7 @@ import CreateContactService from "../services/ContactServices/CreateContactServi
 import ShowContactService from "../services/ContactServices/ShowContactService";
 import UpdateContactService from "../services/ContactServices/UpdateContactService";
 import DeleteContactService from "../services/ContactServices/DeleteContactService";
+import DeleteAllContactService from "../services/ContactServices/DeleteAllContactService";
 import GetContactService from "../services/ContactServices/GetContactService";
 
 import CheckContactNumber from "../services/WbotServices/CheckNumber";
@@ -196,7 +197,7 @@ export const list = async (req: Request, res: Response): Promise<Response> => {
 
 export const toggleDisableBot = async (req: Request, res: Response): Promise<Response> => {
   var { contactId } = req.params;
-  const { companyId} = req.user;
+  const { companyId } = req.user;
   const contact = await ToggleDisableBotContactService({ contactId });
 
   const io = getIO();
@@ -206,4 +207,28 @@ export const toggleDisableBot = async (req: Request, res: Response): Promise<Res
   });
 
   return res.status(200).json(contact);
+};
+
+export const findOrCreate = async (req: Request, res: Response): Promise<Response> => {
+  const { name, number } = req.body as IndexGetContactQuery;
+  const { companyId } = req.user;
+
+  const contact = await GetContactService({
+    name,
+    number,
+    companyId
+  });
+
+  return res.status(200).json(contact);
+};
+
+export const removeAll = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { contactId } = req.params;
+
+  await DeleteAllContactService();
+
+  return res.send();
 };

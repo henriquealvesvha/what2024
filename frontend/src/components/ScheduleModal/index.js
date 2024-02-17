@@ -68,7 +68,7 @@ const ScheduleSchema = Yup.object().shape({
 	sendAt: Yup.string().required("Obrigatório")
 });
 
-const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, reload }) => {
+const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, reload, cls }) => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { user } = useContext(AuthContext);
@@ -168,6 +168,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 			}
 			toast.success(i18n.t("scheduleModal.success"));
 			if (typeof reload == 'function') {
+				cls();
 				reload();
 			}
 			if (contactId) {

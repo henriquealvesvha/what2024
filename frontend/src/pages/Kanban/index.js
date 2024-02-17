@@ -84,7 +84,7 @@ const Kanban = () => {
     const lanes = [
       {
         id: "lane0",
-        title: i18n.t("Inicio"),
+        title: i18n.t("kanban.defaults.lane"),
         label: "0",
         cards: filteredTickets.map(ticket => ({
           id: ticket.id.toString(),
@@ -162,7 +162,7 @@ const Kanban = () => {
   const handleCardMove = async (cardId, sourceLaneId, targetLaneId) => {
     try {
           if(cardId !==sourceLaneId ){
-            await api.post(`https://myapp.comiva.online/tags/${targetLaneId}/${sourceLaneId}/${cardId}`)
+            await api.post(`https://app.autoatende.com/tags/${targetLaneId}/${sourceLaneId}/${cardId}`)
             toast.success('Ticket Atualizado com Sucesso!');
           }
         }catch (err) {

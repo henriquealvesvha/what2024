@@ -1,4 +1,4 @@
-	const messages = {
+const messages = {
 	en: {
 		translations: {
 			signup: {
@@ -115,14 +115,18 @@
 				searchPlaceholder: "Search ...",
 				confirmationModal: {
 					deleteTitle: "Delete",
+					deleteAllTitle: "Deleta All",
 					importTitlte: "Import contacts",
 					deleteMessage:
 						"Are you sure you want to delete this contact? All related tickets will be lost.",
+					deleteAllMessage: "Are you sure you want to delete all contacts? All related tickets will be lost.",
 					importMessage: "Do you want to import all contacts from the phone?",
 				},
 				buttons: {
 					import: "Import Contacts",
 					add: "Add Contact",
+					delete: "Delete all contacts",
+					export: "Export contacts"
 				},
 				table: {
 					name: "Name",

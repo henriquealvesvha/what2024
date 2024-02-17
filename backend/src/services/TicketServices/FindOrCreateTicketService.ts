@@ -54,6 +54,7 @@ const FindOrCreateTicketService = async (
         status: "pending",
         userId: null,
         unreadMessages,
+        whatsappId: whatsappId,
         queueId: null,
         companyId
       });
@@ -87,6 +88,7 @@ const FindOrCreateTicketService = async (
         status: "pending",
         userId: null,
         unreadMessages,
+        whatsappId: whatsappId,
         queueId: null,
         companyId
       });

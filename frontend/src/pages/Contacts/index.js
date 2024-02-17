@@ -20,6 +20,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import EditIcon from "@material-ui/icons/Edit";
+import { Tooltip } from "@material-ui/core";
+import { DeleteForever, ImportExport, PersonAdd, GetApp } from "@material-ui/icons";
 
 import api from "../../services/api";
 import TableRowSkeleton from "../../components/TableRowSkeleton";
@@ -107,6 +109,7 @@ const Contacts = () => {
   const [newTicketModalOpen, setNewTicketModalOpen] = useState(false);
   const [contactTicket, setContactTicket] = useState({});
   const [deletingContact, setDeletingContact] = useState(null);
+  const [deletingAllContact, setDeletingAllContact] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
@@ -192,6 +195,19 @@ const Contacts = () => {
     setPageNumber(1);
   };
 
+  const handleDeleteAllContact = async () => {
+    try {
+      await api.delete("/contacts");
+      toast.success(i18n.t("contacts.toasts.deletedAll"));
+      history.go(0);
+    } catch (err) {
+      toastError(err);
+    }
+    setDeletingAllContact(null);
+    setSearchParam("");
+    setPageNumber();
+  };
+
   const handleimportContact = async () => {
     try {
       await api.post("/contacts/import");
@@ -234,6 +250,7 @@ const Contacts = () => {
             ? `${i18n.t("contacts.confirmationModal.deleteTitle")} ${
                 deletingContact.name
               }?`
+            : deletingAllContact ? `${i18n.t("contacts.confirmationModal.deleteAllTitle")}`
             : `${i18n.t("contacts.confirmationModal.importTitlte")}`
         }
         open={confirmOpen}
@@ -241,15 +258,17 @@ const Contacts = () => {
         onConfirm={(e) =>
           deletingContact
             ? handleDeleteContact(deletingContact.id)
+            : deletingAllContact ? handleDeleteAllContact(deletingAllContact)
             : handleimportContact()
         }
       >
         {deletingContact
           ? `${i18n.t("contacts.confirmationModal.deleteMessage")}`
+          : deletingAllContact ? `${i18n.t("contacts.confirmationModal.deleteAllMessage")}`
           : `${i18n.t("contacts.confirmationModal.importMessage")}`}
       </ConfirmationModal>
       <MainHeader>
-        <Title>{i18n.t("contacts.title")}</Title>
+        <Title>{i18n.t("contacts.title")}({contacts.length})</Title>
         <MainHeaderButtonsWrapper>
           <TextField
             placeholder={i18n.t("contacts.searchPlaceholder")}
@@ -264,26 +283,54 @@ const Contacts = () => {
               ),
             }}
           />
+          <Tooltip title={i18n.t("contacts.buttons.import")}>
           <Button
             variant="contained"
             color="primary"
             onClick={(e) => setConfirmOpen(true)}
           >
-            {i18n.t("contacts.buttons.import")}
+            <GetApp />
           </Button>
+          </Tooltip>
+
+          <Tooltip title={i18n.t("contacts.buttons.add")}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleOpenContactModal}
           >
-            {i18n.t("contacts.buttons.add")}
+            <PersonAdd />
           </Button>
+          </Tooltip>
 
+          <Tooltip title={i18n.t("contacts.buttons.export")}>
          <CSVLink style={{ textDecoration:'none'}} separator=";" filename={'AutoAtende.csv'} data={contacts.map((contact) => ({ name: contact.name, number: contact.number, email: contact.email }))}>
-          <Button	variant="contained" color="primary"> 
-          EXPORTAR CONTATOS 
+          <Button	variant="contained" color="primary">           
+          <ImportExport />
           </Button>
           </CSVLink>
+          </Tooltip>
+
+          <Can
+            role={user.profile}
+            perform="drawer-admin-items:view"
+            yes={() => (
+              <>
+                <Tooltip title={i18n.t("contacts.buttons.delete")}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={(e) => {
+                      setConfirmOpen(true);
+                      setDeletingAllContact(contacts);
+                    }}
+                  >
+                    <DeleteForever />
+                  </Button>
+                </Tooltip>
+                </>
+            )}
+          />
 
         </MainHeaderButtonsWrapper>
       </MainHeader>

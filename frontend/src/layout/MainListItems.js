@@ -138,7 +138,7 @@ const MainListItems = (props) => {
   const [connectionWarning, setConnectionWarning] = useState(false);
   const [openCampaignSubmenu, setOpenCampaignSubmenu] = useState(false);
   const [showCampaigns, setShowCampaigns] = useState(false);
-  
+
   const [showOpenAi, setShowOpenAi] = useState(false);
   const [showIntegrations, setShowIntegrations] = useState(false); const history = useHistory();
   const [showSchedules, setShowSchedules] = useState(false);
@@ -158,17 +158,7 @@ const MainListItems = (props) => {
   }, [searchParam]);
 
   useEffect(() => {
-    async function fetchData() {
-      const companyId = user.companyId;
-      const planConfigs = await getPlanCompany(undefined, companyId);
 
-      setShowCampaigns(planConfigs.plan.useCampaigns);
-      setShowOpenAi(planConfigs.plan.useOpenAi);
-      setShowIntegrations(planConfigs.plan.useIntegrations);
-      setShowSchedules(planConfigs.plan.useSchedules);
-      setShowInternalChat(planConfigs.plan.useInternalChat);
-      setShowExternalApi(planConfigs.plan.useExternalApi);
-    }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -245,6 +235,21 @@ const MainListItems = (props) => {
     return () => clearTimeout(delayDebounceFn);
   }, [whatsApps]);
 
+  async function fetchData() {
+
+    if (window.location.pathname === "/login") return;
+
+    const companyId = user.companyId;
+    const planConfigs = await getPlanCompany(undefined, companyId);
+
+    setShowCampaigns(planConfigs.plan.useCampaigns);
+    setShowOpenAi(planConfigs.plan.useOpenAi);
+    setShowIntegrations(planConfigs.plan.useIntegrations);
+    setShowSchedules(planConfigs.plan.useSchedules);
+    setShowInternalChat(planConfigs.plan.useInternalChat);
+    setShowExternalApi(planConfigs.plan.useExternalApi);
+  }
+
   const fetchChats = async () => {
     try {
       const { data } = await api.get("/chats/", {
@@ -297,48 +302,48 @@ const MainListItems = (props) => {
                 primary={i18n.t("mainDrawer.listItems.quickMessages")}
                 icon={<FlashOnIcon />}
               />
-              
+
               <ListItem
-              button
-              onClick={() => setOpenKanbanSubmenu((prev) => !prev)}
-            >
-              <ListItemIcon>
-                <LoyaltyRounded className={classes.icons} />
-              </ListItemIcon >
-              <ListItemText
-                primary={i18n.t("mainDrawer.listItems.kanban")}
-              />
-              {openKanbanSubmenu ? (
-                <ExpandLessIcon className={classes.icons}/>
-              ) : (
-                <ExpandMoreIcon className={classes.icons}/>
-              )}
-            </ListItem>
-            <Collapse
-            style={{ paddingLeft: 15 }}
-            in={openKanbanSubmenu}
-            timeout="auto"
-            unmountOnExit
-          >
-            <List component="div" disablePadding>
-              <ListItem onClick={() => history.push("/kanban")} button>
-                <ListItemIcon className={classes.icons}>
-                  <ListIcon className={classes.icons}/>
-                </ListItemIcon>
-                <ListItemText primary={i18n.t("kanban.subMenus.list")} />
-              </ListItem>
-              <ListItem
-                onClick={() => history.push("/tagsKanban")}
                 button
+                onClick={() => setOpenKanbanSubmenu((prev) => !prev)}
               >
                 <ListItemIcon>
-                  <CalendarToday className={classes.icons}/>
-                </ListItemIcon>
-                <ListItemText primary={i18n.t("kanban.subMenus.tags")} />
+                  <LoyaltyRounded className={classes.icons} />
+                </ListItemIcon >
+                <ListItemText
+                  primary={i18n.t("mainDrawer.listItems.kanban")}
+                />
+                {openKanbanSubmenu ? (
+                  <ExpandLessIcon className={classes.icons} />
+                ) : (
+                  <ExpandMoreIcon className={classes.icons} />
+                )}
               </ListItem>
-            </List>
-          </Collapse>
-              
+              <Collapse
+                style={{ paddingLeft: 15 }}
+                in={openKanbanSubmenu}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  <ListItem onClick={() => history.push("/kanban")} button>
+                    <ListItemIcon className={classes.icons}>
+                      <ListIcon className={classes.icons} />
+                    </ListItemIcon>
+                    <ListItemText primary={i18n.t("kanban.subMenus.list")} />
+                  </ListItem>
+                  <ListItem
+                    onClick={() => history.push("/tagsKanban")}
+                    button
+                  >
+                    <ListItemIcon>
+                      <CalendarToday className={classes.icons} />
+                    </ListItemIcon>
+                    <ListItemText primary={i18n.t("kanban.subMenus.tags")} />
+                  </ListItem>
+                </List>
+              </Collapse>
+
               <ListItemLink
                 to="/todolist"
                 color="#643570"

@@ -404,6 +404,11 @@ export const getQuotedMessageId = (msg: proto.IWebMessageInfo) => {
   const body = extractMessageContent(msg.message)[
     Object.keys(msg?.message).values().next().value
   ];
+  let reaction = msg?.message?.reactionMessage
+    ? msg?.message?.reactionMessage?.key?.id
+    : "";
+
+  return reaction ? reaction : body?.contextInfo?.stanzaId;
 
   return body?.contextInfo?.stanzaId;
 };
@@ -1074,10 +1079,8 @@ const verifyQueue = async (
     wbot.id!,
     ticket.companyId
   )
-
-
-
-  if (queues.length === 1) {
+  // Alterado para 0, assim envia mensagem de saudaçao com uma única fila
+  if (queues.length === 0) {
     const firstQueue = head(queues);
     let chatbot = false;
     if (firstQueue?.options) {
@@ -1783,7 +1786,8 @@ const handleMessage = async (
         !hasMedia &&
         msgType !== "conversation" &&
         msgType !== "extendedTextMessage" &&
-        msgType !== "vcard"
+        msgType !== "vcard" &&
+        msgType !== "reactionMessage"
       )
         return;
       msgContact = await getContactMessage(msg, wbot);

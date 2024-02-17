@@ -61,6 +61,7 @@ const NotificationsPopOver = (volume) => {
 
 	const [play] = useSound(alertSound, volume);
 	const soundAlertRef = useRef();
+	const [pageTitle, ] = useState(document.title);
 
 	const historyRef = useRef(history);
 
@@ -88,6 +89,17 @@ const NotificationsPopOver = (volume) => {
 			Notification.requestPermission();
 		}
 	}, [play]);
+
+	useEffect(() => {
+		setNotifications(tickets);
+	}, [tickets]);
+
+	useEffect(() => {
+		if (notifications.length > 0)
+			document.title= `(${notifications.length}) ${pageTitle}`;
+		else
+			document.title= pageTitle;
+	}, [notifications]);
 
 	useEffect(() => {
 		const processNotifications = () => {
@@ -162,6 +174,7 @@ const NotificationsPopOver = (volume) => {
 				if (shouldNotNotificate) return;
 
 				handleNotifications(data);
+				soundAlertRef.current();
 			}
 		});
 
@@ -202,8 +215,6 @@ const NotificationsPopOver = (volume) => {
 			}
 			return [notification, ...prevState];
 		});
-
-		soundAlertRef.current();
 	};
 
 	const handleClick = () => {
