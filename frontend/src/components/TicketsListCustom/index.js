@@ -159,7 +159,6 @@ const TicketsListCustom = (props) => {
     searchParam,
     tags,
     users,
-    chatbot,
     showAll,
     selectedQueueIds,
     updateCount,
@@ -174,13 +173,12 @@ const TicketsListCustom = (props) => {
   useEffect(() => {
     dispatch({ type: "RESET" });
     setPageNumber(1);
-  }, [status, searchParam, dispatch, showAll, tags, users, chatbot, selectedQueueIds]);
+  }, [status, searchParam, dispatch, showAll, tags, users, selectedQueueIds]);
 
   const { tickets, hasMore, loading } = useTickets({
     pageNumber,
     searchParam,
     status,
-    chatbot,
     showAll,
     tags: JSON.stringify(tags),
     users: JSON.stringify(users),
@@ -198,7 +196,7 @@ const TicketsListCustom = (props) => {
     } else {
       dispatch({ type: "LOAD_TICKETS", payload: tickets });
     }
-  }, [tickets, status, searchParam, chatbot, queues, profile]);
+  }, [tickets, status, searchParam, queues, profile]);
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
@@ -274,7 +272,7 @@ const TicketsListCustom = (props) => {
     return () => {
       socket.disconnect();
     };
-  }, [status, showAll, user, selectedQueueIds, chatbot, tags, users, profile, queues]);
+  }, [status, showAll, user, selectedQueueIds, tags, users, profile, queues]);
 
   useEffect(() => {
     const count = ticketsList.filter(ticket => !ticket.isGroup).length;

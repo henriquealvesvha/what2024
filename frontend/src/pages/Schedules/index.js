@@ -122,9 +122,6 @@ const Schedules = () => {
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [contactId, setContactId] = useState(+getUrlParam("contactId"));
 
-  const deleteSchedules = () => {
-    dispatch({ type: "RESET" });
-  };
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -259,7 +256,6 @@ const Schedules = () => {
         open={scheduleModalOpen}
         onClose={handleCloseScheduleModal}
         reload={fetchSchedules}
-        cls={deleteSchedules}
         aria-labelledby="form-dialog-title"
         scheduleId={selectedSchedule && selectedSchedule.id}
         contactId={contactId}

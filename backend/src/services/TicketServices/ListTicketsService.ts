@@ -21,7 +21,6 @@ interface Request {
   showAll?: string;
   userId: string;
   withUnreadMessages?: string;
-  chatbot?: boolean | string;
   queueIds: number[];
   tags: number[];
   users: number[];
@@ -42,7 +41,6 @@ const ListTicketsService = async ({
   users,
   status,
   date,
-  chatbot,
   updatedAt,
   showAll,
   userId,
@@ -91,12 +89,6 @@ const ListTicketsService = async ({
     whereCondition = {
       ...whereCondition,
       status
-    };
-  }
-  if (chatbot) {
-    whereCondition = {
-      ...whereCondition,
-      chatbot
     };
   }
 

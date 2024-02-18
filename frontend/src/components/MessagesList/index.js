@@ -10,7 +10,6 @@ import {
   Divider,
   IconButton,
   makeStyles,
-  Badge
 } from "@material-ui/core";
 
 import {
@@ -36,8 +35,6 @@ import toastError from "../../errors/toastError";
 import { socketConnection } from "../../services/socket";
 import { i18n } from "../../translate/i18n";
 
-import VcardPreview from "../VcardPreview";
-
 const useStyles = makeStyles((theme) => ({
   messagesListWrapper: {
     overflow: "hidden",
@@ -52,9 +49,9 @@ const useStyles = makeStyles((theme) => ({
 
   messagesList: {
     backgroundImage:
-      theme.mode === "light"
-        ? `url(${whatsBackground})`
-        : `url(${whatsBackgroundDark})`, display: "flex",
+    theme.mode === "light"
+      ? `url(${whatsBackground})`
+      : `url(${whatsBackgroundDark})`,display: "flex",
     flexDirection: "column",
     flexGrow: 1,
     padding: "20px 20px 20px 20px",
@@ -330,16 +327,16 @@ const reducer = (state, action) => {
   }
 };
 
-const MessagesList = ({
-  ticket,
-  ticketId,
-  isGroup,
-  showSelectMessageCheckbox,
-  setShowSelectMessageCheckbox,
-  setSelectedMessagesList,
+const MessagesList = ({ 
+  ticket, 
+  ticketId, 
+  isGroup, 
+  showSelectMessageCheckbox, 
+  setShowSelectMessageCheckbox, 
+  setSelectedMessagesList, 
   selectedMessagesList,
   forwardMessageModalOpen,
-  setForwardMessageModalOpen
+  setForwardMessageModalOpen 
 }) => {
   const classes = useStyles();
 
@@ -413,14 +410,14 @@ const MessagesList = ({
       socket.disconnect();
     };
   }, [ticketId, ticket]);
-
-  const handleSelectMessage = (e, message) => {
+  
+   const handleSelectMessage = (e, message) => {
     const list = selectedMessagesList;
     if (e.target.checked) {
       list.push(message);
     } else {
       if (list.length >= 4) {
-        toastError({ response: { data: { message: "Não é possível selecionar mais de 4 mensagens para encaminhar." } } });
+        toastError({response: {data: {message: "Não é possível selecionar mais de 4 mensagens para encaminhar."}}});
         return;
       }
       const index = list.findIndex((m) => m.id === message.id);
@@ -431,7 +428,7 @@ const MessagesList = ({
 
   const SelectMessageCheckbox = ({ message, showSelectMessageCheckbox }) => {
     if (showSelectMessageCheckbox) {
-      return <Checkbox aria-label="" color="primary" onChange={(e) => handleSelectMessage(e, message)} />;
+      return <Checkbox aria-label="" color="primary" onChange={(e) => handleSelectMessage(e, message)}  />;
     } else {
       return null;
     }
@@ -473,19 +470,6 @@ const MessagesList = ({
     setAnchorEl(null);
   };
 
-  const extrairNomeENumero = (vcard) => {
-    const nomeMatch = vcard.match(/FN:(.*?)\n/);
-    const nome = nomeMatch ? nomeMatch[1] : '';
-
-    const numeroMatch = vcard.match(/waid=(\d+)/);
-    const numero = numeroMatch ? numeroMatch[1].replace(/\D/g, '') : '';
-    if (nome && numero) {
-      return { nome, numero };
-    } else {
-      return null;
-    }
-  }
-
   const checkMessageMedia = (message) => {
     if (
       message.mediaType === "locationMessage" &&
@@ -507,66 +491,57 @@ const MessagesList = ({
           description={descriptionLocation}
         />
       );
-    }
+    } 
     else if (message.mediaType === "image") {
       return <ModalImageCors imageUrl={message.mediaUrl} />;
-    } else
+    } else if (message.mediaType === "audio") {
+      const handlePlay = async (audioUrl) => {
 
-      if (message.mediaType === "contactMessage") {
+        const formData = new FormData();
+        const response = await fetch(audioUrl);
+        const blob = await response.blob();
+        formData.append("audio", blob, "audio.mp3");
 
-        const vcardPreviewInfo = extrairNomeENumero(message.body)
-
-        return <VcardPreview key={message.id} contact={vcardPreviewInfo?.nome} number={vcardPreviewInfo?.numero} />
-      } else
-
-        if (message.mediaType === "audio") {
-          const handlePlay = async (audioUrl) => {
-
-            const formData = new FormData();
-            const response = await fetch(audioUrl);
-            const blob = await response.blob();
-            formData.append("audio", blob, "audio.mp3");
-
-            try {
-              const transcribeResponse = await api.post("/test/audio", formData);
-              const transcribedData = transcribeResponse.data;
-              console.log("Transcrição:", transcribedData);
-            } catch (error) {
-              console.error("Erro ao transcrever o áudio:", error);
-            }
-          };
-
-          return (
-            <audio onPlay={() => handlePlay(message.mediaUrl)} controls>
-              <source src={message.mediaUrl} type="audio/ogg"></source>
-            </audio>
-          );
-        } else if (message.mediaType === "video") {
-          return (
-            <video
-              className={classes.messageMedia}
-              src={message.mediaUrl}
-              controls
-            />
-          );
-        } else {
-          return (
-            <>
-              <div className={classes.downloadMedia}>
-                <Button
-                  startIcon={<GetApp />}
-                  color="primary"
-                  variant="outlined"
-                  target="_blank"
-                  href={message.mediaUrl}
-                >
-                  Download
-                </Button>
-              </div>
-              <Divider />
-            </>
-          );
+        try {
+          const transcribeResponse = await api.post("/test/audio", formData);
+          const transcribedData = transcribeResponse.data; 
+          console.log("Transcrição:", transcribedData);
+        } catch (error) {
+          console.error("Erro ao transcrever o áudio:", error);
         }
+      };
+
+      return (
+        <audio onPlay={() => handlePlay(message.mediaUrl)} controls>
+          <source src={message.mediaUrl} type="audio/ogg"></source>
+        </audio>
+      );
+    } else if (message.mediaType === "video") {
+      return (
+        <video
+          className={classes.messageMedia}
+          src={message.mediaUrl}
+          controls
+        />
+      );
+    } else {
+      return (
+        <>
+          <div className={classes.downloadMedia}>
+            <Button
+              startIcon={<GetApp />}
+              color="primary"
+              variant="outlined"
+              target="_blank"
+              href={message.mediaUrl}
+            >
+              Download
+            </Button>
+          </div>
+          <Divider />
+        </>
+      );
+    }
   };
 
   const renderMessageAck = (message) => {
@@ -636,7 +611,7 @@ const MessagesList = ({
         return (
           <center>
             <div className={classes.ticketNunberClosed}>
-              Conversa encerrada:{" "}
+            Conversa encerrada:{" "}
               {format(
                 parseISO(messagesList[index - 1].createdAt),
                 "dd/MM/yyyy HH:mm:ss"
@@ -644,7 +619,7 @@ const MessagesList = ({
             </div>
 
             <div className={classes.ticketNunberOpen}>
-              Conversa iniciada:{" "}
+            Conversa iniciada:{" "}
               {format(parseISO(message.createdAt), "dd/MM/yyyy HH:mm:ss")}
             </div>
           </center>
@@ -685,7 +660,7 @@ const MessagesList = ({
             </span>
           )}
 
-          {message.quotedMsg.mediaType === "audio" && (
+{message.quotedMsg.mediaType === "audio" && (
             <div className={classes.downloadMedia}>
               <audio controls>
                 <source
@@ -727,35 +702,35 @@ const MessagesList = ({
   };
 
   const renderMessages = () => {
+    
+      const viewMessagesList = messagesList.map((message, index) => {
 
-    const viewMessagesList = messagesList.map((message, index) => {
-
-      if (message.mediaType === "call_log") {
-        return (
-          <React.Fragment key={message.id}>
-            {renderDailyTimestamps(message, index)}
-            {renderNumberTicket(message, index)}
-            {renderMessageDivider(message, index)}
-            <div className={classes.messageCenter}>
-              <SelectMessageCheckbox showSelectMessageCheckbox={showSelectMessageCheckbox} message={message} />
-              <IconButton
-                variant="contained"
-                size="small"
-                id="messageActionsButton"
-                disabled={message.isDeleted}
-                className={classes.messageActionsButton}
-                onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
-              >
-                <ExpandMore />
-              </IconButton>
-              {isGroup && (
-                <span className={classes.messageContactName}>
-                  {message.contact?.name}
-                </span>
-              )}
-              <div>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 17" width="20" height="17">
-
+        if (message.mediaType === "call_log") {
+          return (
+            <React.Fragment key={message.id}>
+              {renderDailyTimestamps(message, index)}
+              {renderNumberTicket(message, index)}
+              {renderMessageDivider(message, index)}
+              <div className={classes.messageCenter}>
+                <SelectMessageCheckbox showSelectMessageCheckbox={showSelectMessageCheckbox} message={message}/> 
+                <IconButton
+                  variant="contained"
+                  size="small"
+                  id="messageActionsButton"
+                  disabled={message.isDeleted}
+                  className={classes.messageActionsButton}
+                  onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
+                >
+                  <ExpandMore />
+                </IconButton>
+                {isGroup && (
+                  <span className={classes.messageContactName}>
+                    {message.contact?.name}
+                  </span>
+                )}
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 17" width="20" height="17">
+                  
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 17"
@@ -771,161 +746,116 @@ const MessagesList = ({
                     Chamada de voz/vídeo perdida às{" "}
                     {format(parseISO(message.createdAt), "HH:mm")}
                   </span>
-
-                </svg>
+                  
+                  </svg>
+                </div>
               </div>
-            </div>
-          </React.Fragment>
-        );
-      }
+            </React.Fragment>
+          );
+        }
 
-      if (!message.fromMe) {
-        return (
-          <React.Fragment key={message.id}>
-            {renderDailyTimestamps(message, index)}
-            {renderNumberTicket(message, index)}
-            {renderMessageDivider(message, index)}
-            <div className={classes.messageLeft}>
-              <SelectMessageCheckbox showSelectMessageCheckbox={showSelectMessageCheckbox} message={message} />
-              <IconButton
-                variant="contained"
-                size="small"
-                id="messageActionsButton"
-                disabled={message.isDeleted}
-                className={classes.messageActionsButton}
-                onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
-              >
-                <ExpandMore />
-              </IconButton>
-              {isGroup && (
-                <span className={classes.messageContactName}>
-                  {message.contact?.name}
-                </span>
-              )}
+        if (!message.fromMe) {
+          return (
+            <React.Fragment key={message.id}>
+              {renderDailyTimestamps(message, index)}
+              {renderNumberTicket(message, index)}
+              {renderMessageDivider(message, index)}
+              <div className={classes.messageLeft}>
+              <SelectMessageCheckbox showSelectMessageCheckbox={showSelectMessageCheckbox} message={message}/>    
+                <IconButton
+                  variant="contained"
+                  size="small"
+                  id="messageActionsButton"
+                  disabled={message.isDeleted}
+                  className={classes.messageActionsButton}
+                  onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
+                >
+                  <ExpandMore />
+                </IconButton>
+                {isGroup && (
+                  <span className={classes.messageContactName}>
+                    {message.contact?.name}
+                  </span>
+                )}
 
-              {/* aviso de mensagem apagado pelo contato */}
-              {message.isDeleted && (
-                <div>
-                  <span className={classes.deletedMessage}>
-                    🚫 {i18n.t("message.deleted")} &nbsp;
+                 {/* aviso de mensagem apagado pelo contato */}
+                {message.isDeleted && (
+                  <div>
+                    <span className={classes.deletedMessage}>
+                      🚫 {i18n.t("message.deleted")} &nbsp;
+                    </span>
+                  </div>
+                )}
+
+                {(message.mediaUrl ||
+                  message.mediaType === "locationMessage" ||
+                  message.mediaType === "vcard") &&
+                  checkMessageMedia(message)}
+                <div className={[clsx(classes.textContentItem, {
+                        [classes.textContentItemEdited] : message.isEdited
+                      }),
+                    ]}
+                >
+                  {message.quotedMsg && renderQuotedMessage(message)}
+                  <MarkdownWrapper>
+                    {message.mediaType === "locationMessage"
+                      ? null
+                      : message.body}
+                  </MarkdownWrapper>
+                    <span className={classes.timestamp}>
+                    {format(parseISO(message.createdAt), "HH:mm")}
                   </span>
                 </div>
-              )}
-
-              {(message.mediaUrl || message.mediaType === "locationMessage" || message.mediaType === "vcard" || message.mediaType === 'contactMessage') && checkMessageMedia(message)}
-
-
-
-              <div className={[clsx(classes.textContentItem, {
-                [classes.textContentItemEdited]: message.isEdited
-              }),
-              ]}
-              >
-                {message.quotedMsg && renderQuotedMessage(message)}
-
-                {message.mediaType != "reactionMessage" (
-                <MarkdownWrapper>
-                  {message.mediaType === "locationMessage" || message.mediaType === "contactMessage" || message.mediaType === "vcard"
-                    ? null
-                    : message.body}
-                </MarkdownWrapper>
-                )}
-
-                {message.quotedMsg && message.mediaType === "reactionMessage" && (
-                    <>
-                      <Badge className={classes.badge}
-                        overlap="circular"
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right',
-                        }}
-                        badgeContent={<span style={{ fontSize: "4em", marginTop: "-95px", marginLeft: "340px" }}>
-                          {message.body}
-                        </span>}
-                      >
-                      </Badge>
-                      <span style={{ marginLeft: "0px" }}><MarkdownWrapper >{"_*" + message.contact.name + "*_ reagiu..."}</MarkdownWrapper></span>
-                    </>
-                  )}
-
-                <span className={classes.timestamp}>
-                  {format(parseISO(message.createdAt), "HH:mm")}
-                </span>
               </div>
-            </div>
-          </React.Fragment>
-        );
-      } else {
-        return (
-          <React.Fragment key={message.id}>
-            {renderDailyTimestamps(message, index)}
-            {renderNumberTicket(message, index)}
-            {renderMessageDivider(message, index)}
-            <div className={classes.messageRight}>
-              <IconButton
-                variant="contained"
-                size="small"
-                id="messageActionsButton"
-                disabled={message.isDeleted}
-                className={classes.messageActionsButton}
-                onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
-              >
-                <ExpandMore />
-              </IconButton>
-              {/* {(message.mediaUrl ||
-                message.mediaType === "locationMessage" ||
-                message.mediaType === "vcard") &&
-                //|| message.mediaType === "multi_vcard"
-                checkMessageMedia(message)} */}
-
-              {(message.mediaUrl || message.mediaType === "locationMessage" || message.mediaType === "vcard" || message.mediaType === 'contactMessage') && checkMessageMedia(message)}
-
-              <div
-                className={clsx(classes.textContentItem, {
-                  [classes.textContentItemDeleted]: message.isDeleted,
-                })}
-              >
-                {message.isDeleted && (
-                  <Block
-                    color="disabled"
-                    fontSize="small"
-                    className={classes.deletedIcon}
-                  />
-                )}
-                {message.quotedMsg && renderQuotedMessage(message)}
-
-                {message.mediaType != "reactionMessage" && message.mediaType != "locationMessage" && (
-                    <MarkdownWrapper>{message.body}</MarkdownWrapper>
-                )}
-
-                  {message.quotedMsg && message.mediaType === "reactionMessage" && (
-                    <>
-                      <Badge className={classes.badge}
-                        overlap="circular"
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right',
-                        }}
-                        badgeContent={<span style={{ fontSize: "4em", marginTop: "-95px", marginLeft: "340px" }}>
-                          {message.body}
-                        </span>}
-                      >
-                      </Badge>
-                      <span style={{ marginLeft: "0px" }}><MarkdownWrapper >{"_*" + message.contact.name + "*_ reagiu..."}</MarkdownWrapper></span>
-                    </>
+            </React.Fragment>
+          );
+        } else {
+          return (
+            <React.Fragment key={message.id}>
+              {renderDailyTimestamps(message, index)}
+              {renderNumberTicket(message, index)}
+              {renderMessageDivider(message, index)}
+              <div className={classes.messageRight}>
+                <IconButton
+                  variant="contained"
+                  size="small"
+                  id="messageActionsButton"
+                  disabled={message.isDeleted}
+                  className={classes.messageActionsButton}
+                  onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
+                >
+                  <ExpandMore />
+                </IconButton>
+                {(message.mediaUrl ||
+                  message.mediaType === "locationMessage" ||
+                  message.mediaType === "vcard") &&
+                  //|| message.mediaType === "multi_vcard"
+                  checkMessageMedia(message)}
+                <div
+                  className={clsx(classes.textContentItem, {
+                    [classes.textContentItemDeleted]: message.isDeleted,
+                  })}
+                >
+                  {message.isDeleted && (
+                    <Block
+                      color="disabled"
+                      fontSize="small"
+                      className={classes.deletedIcon}
+                    />
                   )}
-
-                <span className={classes.timestamp}>
-                  {format(parseISO(message.createdAt), "HH:mm")}
-                  {renderMessageAck(message)}
-                </span>
+                  {message.quotedMsg && renderQuotedMessage(message)}
+                  <MarkdownWrapper>{message.body}</MarkdownWrapper>
+                  <span className={classes.timestamp}>
+                    {format(parseISO(message.createdAt), "HH:mm")}
+                    {renderMessageAck(message)}
+                  </span>
+                </div>
               </div>
-            </div>
-          </React.Fragment>
-        );
-      }
-    });
-    return viewMessagesList;
+            </React.Fragment>
+          );
+        }
+      });
+      return viewMessagesList;
   };
 
   return (

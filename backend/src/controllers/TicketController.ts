@@ -17,7 +17,6 @@ type IndexQuery = {
   date: string;
   updatedAt?: string;
   showAll: string;
-  chatbot?: boolean | string;
   withUnreadMessages: string;
   queueIds: string;
   tags: string;
@@ -43,7 +42,6 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     updatedAt,
     searchParam,
     showAll,
-    chatbot,
     queueIds: queueIdsStringified,
     tags: tagIdsStringified,
     users: userIdsStringified,
@@ -78,7 +76,6 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     date,
     updatedAt,
     showAll,
-    chatbot,
     userId,
     queueIds,
     withUnreadMessages,

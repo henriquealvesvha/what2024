@@ -157,7 +157,6 @@ const TicketsList = ({
   status,
   searchParam,
   tags,
-  chatbot,
   showAll,
   selectedQueueIds,
 }) => {
@@ -176,7 +175,6 @@ const TicketsList = ({
     searchParam,
     tags: JSON.stringify(tags),
     status,
-    chatbot,
     showAll,
     queueIds: JSON.stringify(selectedQueueIds),
   });

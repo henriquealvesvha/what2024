@@ -159,7 +159,7 @@ const TicketsManagerTabs = () => {
 
   const [openCount, setOpenCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
-  const [chatbotCount, setChatbotCount] = useState(0);
+
   const userQueueIds = user.queues.map((q) => q.id);
   const [selectedQueueIds, setSelectedQueueIds] = useState(userQueueIds || []);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -354,21 +354,7 @@ const TicketsManagerTabs = () => {
             }
             value={"pending"}
           />
-          {user.profile.toUpperCase() === "ADMIN" && (
-              <Tab
-                label={
-                  <Badge
-                    className={classes.badge}
-                    badgeContent={chatbotCount}
-                    color="secondary"
-                  >
-                    {i18n.t("automação")}
-                  </Badge>
-                }
-                value={"automation"}
-              />
-            )}
-          </Tabs>
+        </Tabs>
         <Paper className={classes.ticketsWrapper}>
           <TicketsList
             status="open"
@@ -378,18 +364,10 @@ const TicketsManagerTabs = () => {
             style={applyPanelStyle("open")}
           />
           <TicketsList
-          chatbot={false}
             status="pending"
             selectedQueueIds={selectedQueueIds}
             updateCount={(val) => setPendingCount(val)}
             style={applyPanelStyle("pending")}
-          />
-          <TicketsList
-            chatbot={true}
-            status="pending"
-            selectedQueueIds={selectedQueueIds}
-            updateCount={(val) => setChatbotCount(val)}
-            style={applyPanelStyle("automation")}
           />
         </Paper>
       </TabPanel>

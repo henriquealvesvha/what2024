@@ -189,18 +189,14 @@ const messages = {
         searchPlaceholder: "Pesquisar...",
         confirmationModal: {
           deleteTitle: "Deletar ",
-          deleteAllTitle: "Deletar Todos",
           importTitlte: "Importar contatos",
           deleteMessage:
             "Tem certeza que deseja deletar este contato? Todos os atendimentos relacionados serão perdidos.",
-          deleteAllMessage: "Tem certeza que deseja deletar todos os contatos? Todos os tickets relacionados serão perdidos.",
           importMessage: "Deseja importar todos os contatos do telefone?",
         },
         buttons: {
           import: "Importar Contatos",
           add: "Adicionar Contato",
-          delete: "Excluir todos os contatos",
-          export: "Exportar contatos",
         },
         table: {
           name: "Nome",
@@ -471,7 +467,6 @@ const messages = {
 		typechatbot:"Tipo Chatbot",
 		sendanun:"Enviar saudação ao aceitar o ticket",
 		sendagent:"Enviar mensagem de transferencia de Fila/agente",
-    createuser: "Habilita a criação de usuários",
 		integra:"INTEGRAÇÕES",
 		buttons: {
 			off:"Desabilitado",
@@ -574,8 +569,8 @@ const messages = {
       tagModal: {
         buttons: {
           cancel: "Cancelar",
-          okEdit: "Editar",
-          okAdd: "Salvar",
+          okedit: "Editar",
+          okadd: "Salvar",
         },
         form: {
           name: "Nome",
@@ -584,8 +579,6 @@ const messages = {
         title: {
           addKanban: "Adicionar Tag",
           editKanban: "Editar Tag",
-          add: "Adicionar Tag",
-          edit: "Editar Tag",
         },
       },
       queueIntegration: {
